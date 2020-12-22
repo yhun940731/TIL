@@ -47,7 +47,6 @@ function solution(board, moves) {
   return answer;
 }
 
-
 var result = solution([
   [0, 0, 0, 0, 0],
   [0, 0, 1, 0, 3],

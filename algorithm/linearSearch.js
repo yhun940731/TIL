@@ -1,5 +1,6 @@
+// 선형 검색
 function linearSearch(array, target) {
-  for (var i = 0; i < array.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     if (target === array[i]) return i;
   }
   return -1;
