@@ -1,18 +1,14 @@
 // 선택 정렬
 function selectionSort(array) {
-  let min;
-  let tmp;
-
   for (let i = 0; i < array.length - 1; i++) {
-    min = i;
+    let min = i;
     for (let j = i; j < array.length; j++) {
       if (array[min] > array[j]) min = j;
     }
-    tmp = array[min];
-    array[min] = array[i];
-    array[i] = tmp;
 
-    console.log(array);
+    [array[min], array[i]] = [array[i], array[min]];
+
+    console.log(`${i}: ${array}`);
   }
   return array;
 }
