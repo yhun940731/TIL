@@ -6,6 +6,7 @@ function insertionSort(array) {
         [array[j - 1], array[j]] = [array[j], array[j - 1]];
         console.log(`${i}: ${array}`);
       }
+      else break;
     }
   }
   return array;
