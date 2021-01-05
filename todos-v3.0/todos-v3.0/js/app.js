@@ -8,11 +8,12 @@ const $completed = document.querySelector('.completed-todos');
 const $active = document.querySelector('.active-todos');
 const $nav = document.querySelector('.nav');
 
-const parse = renderList => renderList.map(({ id, content, completed }) => `<li id="${id}" class="todo-item">
-    <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
-    <label for="ck-${id}">${content}</label>
-    <i class="remove-todo far fa-times-circle"></i>
-  </li>`).join('');
+// innerHTML 사용할 시
+// const parse = renderList => renderList.map(({ id, content, completed }) => `<li id="${id}" class="todo-item">
+//     <input id="ck-${id}" class="checkbox" type="checkbox" ${completed ? 'checked' : ''}>
+//     <label for="ck-${id}">${content}</label>
+//     <i class="remove-todo far fa-times-circle"></i>
+//   </li>`).join('');
 
 const render = () => {
   const $nowActive = document.querySelector('.active');
@@ -23,9 +24,53 @@ const render = () => {
   else if ($nowActive.id === 'active') list = todos.filter(todo => !todo.completed);
   else if ($nowActive.id === 'completed') list = todos.filter(todo => todo.completed);
 
-  $todos.innerHTML = parse(list);
+  // innerHTML 사용할 시
+  // $todos.innerHTML = parse(list);
+
+  // fragment 사용 시
+  const $fragment = document.createDocumentFragment();
+
+  const { childNodes } = $todos;
+
+  [...childNodes].forEach(childNode => {
+    $todos.removeChild(childNode);
+  });
+
+  list.forEach(({ id, content, completed }) => {
+    const $li = document.createElement('li');
+    const $input = document.createElement('input');
+    const $label = document.createElement('label');
+    const textNode = document.createTextNode(content);
+    const $i = document.createElement('i');
+
+    $li.setAttribute('id', id);
+    $li.classList.add('todo-item');
+
+    $input.setAttribute('id', `ck-${id}`);
+    $input.classList.add('checkbox');
+    $input.setAttribute('type', 'checkbox');
+    if (completed) $input.setAttribute('checked', '');
+
+    $label.setAttribute('for', `ck-${id}`);
+    $label.appendChild(textNode);
+
+    $i.classList.add('remove-todo', 'far', 'fa-times-circle');
+
+    $li.appendChild($input);
+    $li.appendChild($label);
+    $li.appendChild($i);
+
+    $fragment.appendChild($li);
+  });
+
+  $todos.appendChild($fragment);
+
   $completed.textContent = todos.filter(todo => todo.completed).length;
   $active.textContent = todos.filter(todo => !todo.completed).length;
+
+  // 모두 체크될 경우 전체 표시 on
+  if (todos.filter(todo => todo.completed).length === todos.length) $completeAll.checked = true;
+  else $completeAll.checked = false;
 };
 
 const fetchTodos = () => {
@@ -50,9 +95,6 @@ const addTodo = content => {
 const toggleTodo = id => {
   todos = todos.map(todo => (todo.id === +id ? { ...todo, completed: !todo.completed } : todo));
 
-  if (todos.filter(todo => todo.completed).length === todos.length) $completeAll.checked = true;
-  else $completeAll.checked = false;
-
   render();
 };
 
@@ -62,10 +104,8 @@ const removeTodo = id => {
 };
 
 const toggleCompleted = () => {
-  todos = todos.map(todo => ({
-    ...todo,
-    completed: $completeAll.checked
-  }));
+  todos = todos.map(todo => ({ ...todo, completed: $completeAll.checked }));
+
   render();
 };
 
