@@ -3,7 +3,7 @@
 // for 문은 사용하지 않도록 하자.
 
 function uniq(array) {
-
+  return array.filter((v, i, arr) => arr.indexOf(v) === i);
 }
 
 console.log(uniq([2, 1, 2, 3, 4, 3, 4])); // [ 2, 1, 3, 4 ]

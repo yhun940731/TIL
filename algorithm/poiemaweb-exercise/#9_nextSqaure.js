@@ -5,6 +5,7 @@
 
 function nextSqaure(n) {
   const x = Math.sqrt(n);
+  // isInteger 메서드도 가능
   return x % 1 !== 0 ? 'no' : (x + 1) ** 2;
 }
 
