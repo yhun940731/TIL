@@ -5,7 +5,7 @@
 
 function findMinDistance(array) {
   const arr = array.map((v, i, arr) => v = arr[i + 1] - arr[i]).filter(v => !isNaN(v));
-  let min = Math.min(...arr);
+  const min = Math.min(...arr);
 
   return arr.reduce((acc, cur, i) => {
     if (cur === min) acc.push([array[i], array[i + 1]]);
