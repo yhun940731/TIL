@@ -7,9 +7,9 @@ function getCurrentWeek() {
   const today = new Date();
   const day = today.getDay();
   const weekToMilliseconds = Array.from({ length: 7 },
-    (v, i) => v = Date.parse(today) + oneDay * (i - day));
+    (v, i) => Date.parse(today) + oneDay * (i - day));
 
-  return weekToMilliseconds.map(v => v = new Date(v).toISOString().slice(0, 10));
+  return weekToMilliseconds.map(v => new Date(v).toISOString().slice(0, 10));
 }
 
 console.log(getCurrentWeek());
