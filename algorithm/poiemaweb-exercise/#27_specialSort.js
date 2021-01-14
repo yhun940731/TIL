@@ -10,6 +10,9 @@ function specialSort(array) {
   const minus = array.filter(v => v < 0).sort((a, b) => b - a);
 
   return [...minus, ...plus];
+
+  // sort는 유니코드 정렬이라 아래 코드도 가능
+  // return array.sort();
 }
 
 const testArray = [-1, 1, 3, -2, 2, 0];

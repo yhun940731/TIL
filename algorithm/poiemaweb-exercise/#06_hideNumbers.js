@@ -4,7 +4,7 @@
 // 예를 들어, s가 ‘01033334444’면 *******4444를 리턴하고, ‘027778888’인 경우는 *****8888을 리턴한다.
 
 function hideNumbers(str) {
-  return [...str].map((v, i, arr) => i < arr.length - 4 ? '*' : v).join('');
+  return [...str].map((v, i, arr) => (i < arr.length - 4 ? '*' : v)).join('');
 }
 
 console.log(hideNumbers('01033334444')); // *******4444

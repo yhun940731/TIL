@@ -4,7 +4,7 @@
 // str은 부호(+,-)와 숫자로만 구성되어 있고, 잘못된 값이 입력되는 경우는 없다.
 
 function strToInt(str) {
-  return parseInt(str);
+  return parseInt(str, 10);
 }
 
 console.log(strToInt('1234')); // 1234

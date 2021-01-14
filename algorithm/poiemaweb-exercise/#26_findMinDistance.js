@@ -4,7 +4,7 @@
 // 결과값은 [[3, 4], [23, 24]]가 될 것이다.
 
 function findMinDistance(array) {
-  const arr = array.map((v, i, arr) => v = arr[i + 1] - arr[i]).filter(v => !isNaN(v));
+  const arr = array.map((v, i, a) => a[i + 1] - a[i]).filter(v => !Number.isNaN(v));
 
   return arr.reduce((acc, cur, i) => {
     if (cur === Math.min(...arr)) acc.push([array[i], array[i + 1]]);

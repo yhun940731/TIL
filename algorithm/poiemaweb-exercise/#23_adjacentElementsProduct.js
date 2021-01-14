@@ -11,7 +11,7 @@ function adjacentElementsProduct(arr) {
     if (tmp > res) res = tmp;
   }
 
-  return tmp;
+  return res;
 }
 
 console.log(adjacentElementsProduct([3, 6, -2, -5, 7, 3])); // 21

@@ -9,7 +9,7 @@ function sumDivisor(num) {
     if (num % i === 0) arr.push(i);
   }
 
-  return arr.reduce((acc, cur) => acc += cur, 0);
+  return arr.reduce((acc, cur) => acc + cur, 0);
 }
 
 console.log(sumDivisor(12)); // 28
