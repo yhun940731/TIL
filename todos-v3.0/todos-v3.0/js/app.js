@@ -30,11 +30,13 @@ const render = () => {
   // fragment 사용 시
   const $fragment = document.createDocumentFragment();
 
-  const { childNodes } = $todos;
+  // 아래 $todos.textContent 와 같지만 리플로우 발생
+  // const { childNodes } = $todos;
+  // [...childNodes].forEach(childNode => {
+  //   $todos.removeChild(childNode);
+  // });
 
-  [...childNodes].forEach(childNode => {
-    $todos.removeChild(childNode);
-  });
+  $todos.textContent = '';
 
   list.forEach(({ id, content, completed }) => {
     const $li = document.createElement('li');
