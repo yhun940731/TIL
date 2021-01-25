@@ -18,11 +18,7 @@ const $nav = document.querySelector('.nav');
 const render = () => {
   const $nowActive = document.querySelector('.active');
 
-  let list = [];
-
-  if ($nowActive.id === 'all') list = todos;
-  else if ($nowActive.id === 'active') list = todos.filter(todo => !todo.completed);
-  else if ($nowActive.id === 'completed') list = todos.filter(todo => todo.completed);
+  const list = todos.filter(todo => ($nowActive.id === 'active' ? !todo.completed : $nowActive.id === 'completed' ? todo.completed : todo));
 
   // innerHTML 사용할 시
   // $todos.innerHTML = parse(list);
@@ -32,7 +28,7 @@ const render = () => {
 
   // 아래 $todos.textContent 와 같지만 리플로우 발생
   // const { childNodes } = $todos;
-  // [...childNodes].forEach(childNode => {
+  // [...childNodes].forEach(childNode => {0
   //   $todos.removeChild(childNode);
   // });
 
