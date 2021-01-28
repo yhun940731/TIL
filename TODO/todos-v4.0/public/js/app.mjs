@@ -68,8 +68,8 @@ const removeTodo = id => {
   // todos = todos.filter(todo => todo.id !== +id);
   // render();
 
-  ajax.delete(`/todos/${id}`, () => {
-    todos = todos.filter(todo => todo.id !== +id);
+  ajax.delete(`/todos/${id}`, deletedTodo => {
+    todos = deletedTodo;
     console.log('[removeTodo]', todos);
     render();
   });
@@ -79,8 +79,8 @@ const toggleCompleteAll = completed => {
   // todos = todos.map(todo => ({ ...todo, completed }));
   // render();
 
-  ajax.patch('/todos', { completed }, () => {
-    todos = todos.map(todo => ({ ...todo, completed }));
+  ajax.patch('/todos', { completed }, patchedTodo => {
+    todos = patchedTodo;
     console.log('[toggleCompleteAll]', todos);
     render();
   });
@@ -90,8 +90,8 @@ const removeCompleted = () => {
   // todos = todos.filter(todo => !todo.completed);
   // render();
 
-  ajax.delete('/todos/completed', () => {
-    todos = todos.filter(todo => !todo.completed);
+  ajax.delete('/todos/completed', newTodo => {
+    todos = newTodo;
     console.log('[removeCompleted]', todos);
     render();
   });

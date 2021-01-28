@@ -47,10 +47,7 @@ app.patch('/todos/:id', (req, res) => {
   const completed = req.body;
 
   if (todos.map(todo => todo.id).includes(id) && (typeof completed.completed === 'boolean')) {
-    todos = todos.map(todo => (todo.id === +id ? {
-      ...todo,
-      ...completed
-    } : todo));
+    todos = todos.map(todo => (todo.id === +id ? { ...todo, ...completed } : todo));
     res.send(todos);
   } else {
     res.send({
@@ -62,10 +59,7 @@ app.patch('/todos/:id', (req, res) => {
 
 app.patch('/todos', (req, res) => {
   const completed = req.body;
-  todos = todos.map(todo => ({
-    ...todo,
-    ...completed
-  }));
+  todos = todos.map(todo => ({ ...todo, ...completed }));
   res.send(todos);
 });
 
