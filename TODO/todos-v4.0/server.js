@@ -43,7 +43,7 @@ app.post('/todos', (req, res) => {
 
   // 페이로드가 없는 경우
   if (isEmptyObject(newTodo)) {
-    return res.status(400).send({
+    res.status(400).send({
       error: true,
       reason: 'payload가 존재하지 않습니다.'
     });
@@ -51,7 +51,7 @@ app.post('/todos', (req, res) => {
 
   // 아이디가 중복되는 경우
   if (isDuplicatedId(todos, newTodo.id)) {
-    return res.status(400).send({
+    res.status(400).send({
       error: true,
       reason: `id ${req.body.id}는 중복된 id입니다.`
     });

@@ -38,7 +38,7 @@ const setTodos = _todos => {
 };
 
 const getTodos = () => {
-  // ajax.get('/todos', setTodos);
+  ajax.get('/todos', setTodos);
 };
 
 const generateId = () => (todos.length ? Math.max(...todos.map(todo => todo.id)) + 1 : 1);
