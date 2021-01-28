@@ -31,12 +31,14 @@ const render = () => {
   $activeTodos.textContent = todos.filter(({ completed }) => !completed).length;
 };
 
+const setTodos = _todos => {
+  todos = _todos.sort((todo1, todo2) => todo2.id - todo1.id);
+  console.log(todos);
+  render();
+};
+
 const getTodos = () => {
-  ajax.get('/todos', _todos => {
-    todos = _todos.sort((todo1, todo2) => todo2.id - todo1.id);
-    console.log(todos);
-    render();
-  });
+  ajax.get('/todos', setTodos);
 };
 
 const generateId = () => (todos.length ? Math.max(...todos.map(todo => todo.id)) + 1 : 1);
@@ -45,56 +47,36 @@ const addTodo = content => {
   // todos = [{ id: generateId(), content, completed: false }, ...todos];
   // render();
 
-  ajax.post('/todos', { id: generateId(), content, completed: false }, newTodo => {
-    todos = newTodo;
-    console.log('[addTodo]', todos);
-    render();
-  });
+  ajax.post('/todos', { id: generateId(), content, completed: false }, setTodos);
 };
 
 const toggleTodo = id => {
   // todos = todos.map(todo => (todo.id === +id ? { ...todo, completed: !todo.completed } : todo));
   // render();
 
-  const { completed } = todos.find(todo => todo.id === +id);
-  ajax.patch(`/todos/${id}`, { completed: !completed }, updatedTodo => {
-    todos = updatedTodo;
-    console.log('[toggleTodo]', todos);
-    render();
-  });
+  const completed = !todos.find(todo => todo.id === +id).completed;
+  ajax.patch(`/todos/${id}`, { completed }, setTodos);
 };
 
 const removeTodo = id => {
   // todos = todos.filter(todo => todo.id !== +id);
   // render();
 
-  ajax.delete(`/todos/${id}`, deletedTodo => {
-    todos = deletedTodo;
-    console.log('[removeTodo]', todos);
-    render();
-  });
+  ajax.delete(`/todos/${id}`, setTodos);
 };
 
 const toggleCompleteAll = completed => {
   // todos = todos.map(todo => ({ ...todo, completed }));
   // render();
 
-  ajax.patch('/todos', { completed }, patchedTodo => {
-    todos = patchedTodo;
-    console.log('[toggleCompleteAll]', todos);
-    render();
-  });
+  ajax.patch('/todos', { completed }, setTodos);
 };
 
 const removeCompleted = () => {
   // todos = todos.filter(todo => !todo.completed);
   // render();
 
-  ajax.delete('/todos/completed', newTodo => {
-    todos = newTodo;
-    console.log('[removeCompleted]', todos);
-    render();
-  });
+  ajax.delete('/todos/completed', setTodos);
 };
 
 const changeNavState = id => {

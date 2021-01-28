@@ -1,10 +1,18 @@
-const express = require('express');
-const cors = require('cors');
+// const express = require('express');
+// const cors = require('cors');
+
+// commonJS가 아닌 module 방식 사용 -> package.json에 type: module
+import express from 'express';
+import cors from 'cors';
+
+import isEmptyObject from './utils/isEmptyObject.mjs';
+import isDuplicatedId from './utils/isDuplicatedId.mjs';
 
 let todos = [
+  { id: 4, content: 'React', completed: false },
   { id: 3, content: 'Javascript', completed: false },
   { id: 2, content: 'CSS', completed: false },
-  { id: 1, content: 'HTML', completed: false },
+  { id: 1, content: 'HTML', completed: true },
 ];
 
 const app = express();
@@ -31,15 +39,36 @@ app.get('/todos/:id', (req, res) => {
 });
 
 app.post('/todos', (req, res) => {
-  if (!(todos.map(todo => todo.id).includes(req.body.id))) {
-    todos = [req.body, ...todos];
-    res.send(todos);
-  } else {
-    res.send({
+  const newTodo = req.body;
+
+  // 페이로드가 없는 경우
+  if (isEmptyObject(newTodo)) {
+    return res.status(400).send({
       error: true,
-      reason: `id ${req.body.id}는 이미 존재하는 id입니다.`
+      reason: 'payload가 존재하지 않습니다.'
     });
   }
+
+  // 아이디가 중복되는 경우
+  if (isDuplicatedId(todos, newTodo.id)) {
+    return res.status(400).send({
+      error: true,
+      reason: `id ${req.body.id}는 중복된 id입니다.`
+    });
+  }
+
+  todos = [req.body, ...todos];
+  res.send(todos);
+
+  // if (!(todos.map(todo => todo.id).includes(req.body.id))) {
+  //   todos = [req.body, ...todos];
+  //   res.send(todos);
+  // } else {
+  //   res.send({
+  //     error: true,
+  //     reason: `id ${req.body.id}는 이미 존재하는 id입니다.`
+  //   });
+  // }
 });
 
 app.patch('/todos/:id', (req, res) => {
@@ -59,8 +88,15 @@ app.patch('/todos/:id', (req, res) => {
 
 app.patch('/todos', (req, res) => {
   const completed = req.body;
-  todos = todos.map(todo => ({ ...todo, ...completed }));
-  res.send(todos);
+  if (todos.length) {
+    todos = todos.map(todo => ({ ...todo, ...completed }));
+    res.send(todos);
+  } else {
+    res.send({
+      error: true,
+      reason: '선택할 요소가 없음.'
+    });
+  }
 });
 
 app.delete('/todos/completed', (req, res) => {
