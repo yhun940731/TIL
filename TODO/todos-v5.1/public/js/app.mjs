@@ -64,9 +64,8 @@ const setTodos = _todos => {
 };
 
 const getTodos = async () => {
-  const _todos = await ajax.get('/todos');
-
   try {
+    const _todos = await ajax.get('/todos');
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -76,9 +75,8 @@ const getTodos = async () => {
 const generateId = () => (todos.length ? Math.max(...todos.map(todo => todo.id)) + 1 : 1);
 
 const addTodo = async content => {
-  const _todos = await ajax.post('/todos', { id: generateId(), content, completed: false });
-
   try {
+    const _todos = await ajax.post('/todos', { id: generateId(), content, completed: false });
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -88,8 +86,8 @@ const addTodo = async content => {
 const toggleTodo = async id => {
   const completed = !todos.find(todo => todo.id === +id).completed;
 
-  const _todos = await ajax.patch(`/todos/${id}`, { completed });
   try {
+    const _todos = await ajax.patch(`/todos/${id}`, { completed });
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -97,9 +95,8 @@ const toggleTodo = async id => {
 };
 
 const removeTodo = async id => {
-  const _todos = await ajax.delete(`/todos/${id}`);
-
   try {
+    const _todos = await ajax.delete(`/todos/${id}`);
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -107,8 +104,8 @@ const removeTodo = async id => {
 };
 
 const toggleCompleteAll = async completed => {
-  const _todos = await ajax.patch('/todos', { completed });
   try {
+    const _todos = await ajax.patch('/todos', { completed });
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -116,8 +113,8 @@ const toggleCompleteAll = async completed => {
 };
 
 const removeCompleted = async () => {
-  const _todos = await ajax.delete('/todos/completed');
   try {
+    const _todos = await ajax.delete('/todos/completed');
     setTodos(_todos);
   } catch (err) {
     console.error(err);
