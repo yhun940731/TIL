@@ -65,8 +65,7 @@ const setTodos = _todos => {
 
 const getTodos = async () => {
   try {
-    const response = await request.get('/todos');
-    const _todos = await response.json();
+    const _todos = await request.get('/todos');
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -77,8 +76,7 @@ const generateId = () => (todos.length ? Math.max(...todos.map(todo => todo.id))
 
 const addTodo = async content => {
   try {
-    const response = await request.post('/todos', { id: generateId(), content, completed: false });
-    const _todos = await response.json();
+    const _todos = await request.post('/todos', { id: generateId(), content, completed: false });
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -89,8 +87,7 @@ const toggleTodo = async id => {
   const completed = !todos.find(todo => todo.id === +id).completed;
 
   try {
-    const response = await request.patch(`/todos/${id}`, { completed });
-    const _todos = await response.json();
+    const _todos = await request.patch(`/todos/${id}`, { completed });
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -99,8 +96,7 @@ const toggleTodo = async id => {
 
 const removeTodo = async id => {
   try {
-    const response = await request.delete(`/todos/${id}`);
-    const _todos = await response.json();
+    const _todos = await request.delete(`/todos/${id}`);
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -109,8 +105,7 @@ const removeTodo = async id => {
 
 const toggleCompleteAll = async completed => {
   try {
-    const response = await request.patch('/todos', { completed });
-    const _todos = await response.json();
+    const _todos = await request.patch('/todos', { completed });
     setTodos(_todos);
   } catch (err) {
     console.error(err);
@@ -119,8 +114,7 @@ const toggleCompleteAll = async completed => {
 
 const removeCompleted = async () => {
   try {
-    const response = await request.delete('/todos/completed');
-    const _todos = await response.json();
+    const _todos = await request.delete('/todos/completed');
     setTodos(_todos);
   } catch (err) {
     console.error(err);
