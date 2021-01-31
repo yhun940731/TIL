@@ -64,13 +64,9 @@ const setTodos = _todos => {
 };
 
 const getTodos = async () => {
-  // ajax.get('/todos')
-  //   .then(setTodos)
-  //   .catch(console.error);
-
-  // async await 처리는 동기 함수 처럼 사용 가능
-  const _todos = await ajax.get('/todos');
-  setTodos(_todos);
+  ajax.get('/todos')
+    .then(setTodos)
+    .catch(console.error);
 };
 
 const generateId = () => (todos.length ? Math.max(...todos.map(todo => todo.id)) + 1 : 1);
