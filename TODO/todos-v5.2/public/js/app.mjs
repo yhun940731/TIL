@@ -1,4 +1,4 @@
-import request from './promise.mjs';
+import request from './fetch.mjs';
 
 // State
 let todos = [];
