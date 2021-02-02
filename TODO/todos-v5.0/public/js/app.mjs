@@ -63,7 +63,7 @@ const setTodos = _todos => {
   render();
 };
 
-const getTodos = async () => {
+const getTodos = () => {
   ajax.get('/todos')
     .then(setTodos)
     .catch(console.error);
