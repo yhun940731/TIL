@@ -112,7 +112,6 @@ body {
   .checkbox
   .checkbox 바로 뒤에 위치한 label의 before와 after를 사용해
   .checkbox의 외부 박스와 내부 박스를 생성한다.
-
   <input class="checkbox" type="checkbox" id="myId">
   <label for="myId">Content</label>
 */
