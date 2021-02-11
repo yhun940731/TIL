@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Popup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <style>
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans';
+        font-weight: 300;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+      /* 팝업을 위한 CSS */
+      .popup {
+
+      }
+      .overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Popup</h1>
+
+    <!-- 팝업을 위한 HTML -->
+    <form class="popup">
+      <h1 class="title">Hello!</h1>
+      <p>hihihihihi</p>
+      <button type="submit" class="btn ok">OK</button>
+      <button type="button" class="btn cancel">Cancel</button>
+    </form>
+    <div class="overlay"></div>
+    <button class="btn toggle-popup">toggle popup</button>
+    <p class="popup-message"></p>
+    <script>
+      const $popup = document.querySelector('.popup');
+      const $popupInput = document.querySelector('.popup > input');
+      const $popupMessage = document.querySelector('.popup-message');
+      const $overlay = document.querySelector('.overlay');
+      
+      const popup = (() => {
+        let isActive = false;
+
+        return {
+          toggle() {
+            isActive = !isActive;
+            $popup.style.display = isActive ? 'block' : 'none';
+            $overlay.style.display = isActive ? 'block' : 'none';
+          },
+
+          close() {
+            $popup.style.display = 'none';
+            $overlay.style.display = 'none';
+            isActive = false;
+          }
+        };
+      })();
+      
+      document.querySelector('.toggle-popup').onclick = popup.toggle;
+      document.querySelector('.close').onclick = popup.close;
+      document.querySelector('.cancel').onclick = popup.close;
+      $overlay.onclick = popup.close;
+      $popup.onsubmit = e => {
+        e.preventDefault();
+        $popupMessage.textContent = `from popup: ${$popupInput.value}`;
+        $popupInput.value = '';
+        popup.close();
+      };
+    </script>
+  </body>
+</html>
