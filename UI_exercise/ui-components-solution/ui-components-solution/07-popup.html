@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Popup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <style>
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans';
+        font-weight: 300;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+      /* 팝업을 위한 CSS */
+      .popup {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translate3d(-50%, 0, 0);
+        max-width: 520px;
+        min-height: 200px;
+        background-color: #fff;
+        padding: 20px 40px;
+        box-shadow: 0 7px 8px -4px rgba(0, 0, 0, 0.2), 0 13px 19px 2px rgba(0, 0, 0, 0.14),
+          0 5px 24px 4px rgba(0, 0, 0, 0.12);
+        border-radius: 5px;
+        z-index: 1000;
+        display: none;
+      }
+      .overlay {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+        display: none;
+      }
+      .btn {
+        cursor: pointer;
+        outline: none;
+      }
+      .btn.close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 30px;
+        border: 0;
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Popup</h1>
+    <!-- 팝업을 위한 HTML -->
+    <form class="popup">
+      <h1 class="title">Hello!</h1>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam
+      </p>
+      <button type="button" class="btn close"><i class="bx bx-x"></i></button>
+      <input type="text" />
+      <button type="submit" class="btn ok">OK</button>
+      <button type="button" class="btn cancel">Cancel</button>
+    </form>
+    <div class="overlay"></div>
+    <button class="btn toggle-popup">toogle popup</button>
+    <p class="popup-message"></p>
+    <script>
+      const popup = (() => {
+        let isActive = false;
+
+        const $popup = document.querySelector('.popup');
+        const $popupInput = document.querySelector('.popup > input');
+        const $popupMessage = document.querySelector('.popup-message');
+        const $overlay = document.querySelector('.overlay');
+
+        const closePopup = () => {
+          isActive = false;
+          $popupInput.value = '';
+          $popup.style.display = 'none';
+          $overlay.style.display = 'none';
+        };
+
+        return {
+          toggle() {
+            isActive = !isActive;
+            $popup.style.display = isActive ? 'block' : 'none';
+            $overlay.style.display = isActive ? 'block' : 'none';
+          },
+          close() {
+            closePopup();
+          },
+          showMessage() {
+            const { value } = $popupInput;
+            $popupInput.value = '';
+            $popupMessage.textContent = `from popup : ${value}`;
+            closePopup();
+          }
+        };
+      })();
+
+      document.querySelector('.btn.toggle-popup').onclick = popup.toggle;
+      document.querySelector('.overlay').onclick = popup.close;
+      document.querySelector('.btn.close').onclick = popup.close;
+      document.querySelector('.btn.cancel').onclick = popup.close;
+
+      // submit 이벤트는 sumit 버튼인 OK 버튼이 클릭되었을 때 그리고 입력 필드 안에서 엔터키가 입력되었을 때만 발생한다.
+      document.querySelector('.popup').onsubmit = e => {
+        e.preventDefault();
+        popup.showMessage();
+      };
+    </script>
+  </body>
+</html>

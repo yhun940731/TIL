@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <style>
+      *,
+      *::after,
+      *::before {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans';
+        font-weight: 300;
+      }
+      .title {
+        color: #db5b33;
+        font-weight: 300;
+        text-align: center;
+      }
+
+      /* Calendar */
+      .calendar {
+        /* --calendar-width의 값이 변경되면 캘린더 전체의 크기와 폰트 사이즈가 연동해서 조정되도록 한다. */
+        --calendar-width: 360px;
+        /* --calendar-width = grid-item-size * 7 + (pdding-left + padding-right) */
+        --calendar-grid-item-size: calc((var(--calendar-width) - 10px) / 7);
+        /* --calendar-width가 360px일 때 14.4px */
+        --calendar-font-size: calc(var(--calendar-width) * 0.04);
+        --calendar-primary-color: #43c37a;
+
+        width: var(--calendar-width);
+        box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 0 5px 5px;
+        font-size: var(--calendar-font-size);
+        display: none;
+      }
+      .calendar-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        margin: -5px;
+        margin-bottom: 0;
+        background-color: var(--calendar-primary-color);
+        color: #fff;
+        border-radius: 10px 10px 0 0;
+      }
+      .calendar-nav > .calendar-title {
+        text-align: center;
+        color: #fff;
+      }
+      .calendar-nav > .calendar-title > .month {
+        font-size: 1.4em;
+      }
+      .calendar-nav > .prev,
+      .calendar-nav > .next {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        font-size: 1.8em;
+        cursor: pointer;
+      }
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+      .calendar-grid > .day,
+      .calendar-grid > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: var(--calendar-grid-item-size);
+      }
+      .calendar-grid > .day {
+        color: rgba(0, 0, 0, 0.3);
+        text-transform: uppercase;
+      }
+      .calendar-grid > div:not(.day) {
+        cursor: pointer;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+      }
+      .calendar-grid > .sunday {
+        color: red;
+      }
+      .calendar-grid > .muted {
+        color: rgba(0, 0, 0, 0.3);
+      }
+      .calendar-grid > .today {
+        border: 1px solid var(--calendar-primary-color);
+      }
+      .calendar-grid > div:not(.day):hover,
+      .calendar-grid > .selected,
+      .calendar-grid > .selected.muted {
+        color: #fff;
+        background-color: var(--calendar-primary-color);
+      }
+
+      /* Date picker */
+      .date-picker {
+        width: 180px;
+        margin: 20px auto;
+      }
+      .date-picker > .date-picker-selector {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Date Picker</h1>
+    <div class="date-picker">
+      <input class="date-picker-selector" type="text" placeholder="Select date" readonly />
+      <div class="calendar"></div>
+    </div>
+    <script>
+      // Global state
+      let currentDate = new Date(); // 캘린더의 next/prev 버튼이 클릭되면 익월/전월로 변경된다.
+
+      // DOM Nodes
+      const $datepicker = document.querySelector('.date-picker > .date-picker-selector');
+      const $calendar = document.querySelector('.date-picker > .calendar');
+
+      // date 객체를 'yyyy-mm-dd' 형식의 문자열로 변환하여 반환한다.
+      const formattedDate = (() => {
+        const format = n => (n < 10 ? '0' + n : n + '');
+        return date => `${date.getFullYear()}-${format(date.getMonth() + 1)}-${format(date.getDate())}`;
+      })();
+
+      const renderCalendar = (() => {
+        let size = 360; // 캘린더 크기
+
+        const monthNames = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ];
+
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        // 년도와 월을 나타내는 정수를 전달받아 해당 월의 캘린더를 구성하는 Date 객체들의 배열을 생성한다.
+        // eachCalendarDates(2021, 0) // => 2021년 1월을 구성하는 Date 객체들의 배열
+        const eachCalendarDates = (() => {
+          // Date 객체 from과 to를 전달받아 from과 to 사이에 존재하는 일의 총수를 반환한다.
+          const diffDays = (from, to) => Math.abs(to - from) / 86400000;
+
+          return (currentYear, currentMonth) => {
+            // currentDate를 기준으로 1일의 요일을 나타내는 정수(1 ~ 7)를 빈환한다.
+            // new Date(year, month[, day, hour, minute, second, millisecond])
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay() + 1;
+
+            // 전역 상태 currentDate를 기준으로 말일의 요일을 나타내는 정수(1 ~ 7)를 빈환한다.
+            // Date 생성자 함수의 2번째 매개변수(월)에 월을 나타내는 정수(0~6)에 1을 더한 값을 전달하면 익월을 가리키는 Date 객체를 반환한다.
+            // new Date(2021, 0 + 1) => 2021/2/1
+            // Date 생성자 함수의 3번째 매개변수(날짜)에 0을 전달하면 전월 말일을 가리키는 Date 객체를 반환한다.
+            // new Date(2021, 0 + 1, 0) => 2021/01/31
+            const lastDay = new Date(currentYear, currentMonth + 1, 0).getDay() + 1;
+
+            // 전역 상태 currentDate를 기준으로 캘린더의 시작 날짜를 나타내는 Date 객체를 취득한다.
+            // Date 생성자 함수의 3번째 매개변수(날짜)에 0을 전달하면 전월 말일, -1을 전달하면 전월 말일의 전날을 가리키는 Date 객체를 반환한다.
+            // new Date(2021, 0, 0) => 2020/12/31
+            // new Date(2021, 0, -1) => 2020/12/30
+            // new Date(2021, 0, -2) => 2020/12/29
+            const from = new Date(currentYear, currentMonth, 1 - (firstDay - 1));
+
+            // 전역 상태 currentDate를 기준으로 캘린더의 마지막 날짜를 나타내는 Date 객체를 취득한다.
+            const to = new Date(currentYear, currentMonth + 1, 7 - lastDay);
+
+            // from과 to 사이에 존재하는 일의 총수 + 1 크기의 배열을 생성하고
+            // 캘린더의 시작 날짜를 나타내는 Date 객체부터 시작해 Date 객체를 하루씩 증가시키면서 캘린더를 구성하는 Date 객체로 배열을 채운다.
+            return Array.from({ length: diffDays(from, to) + 1 }, (_, i) => {
+              if (i) from.setDate(from.getDate() + 1); // from을 다음날로 변경
+              return new Date(from); // 복사본을 반환
+            });
+          };
+        })();
+
+        // 전달받은 2개의 Date 객체가 같은 년도/월/날짜를 가리키는지 확인한다.
+        const isEqualDate = (d1, d2) =>
+          d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate();
+
+        return _size => {
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth();
+
+          const classNames = date => {
+            const today = new Date();
+            const res = [];
+
+            if (isEqualDate(date, today)) res.push('today');
+            if (date.getMonth() !== month) res.push('muted');
+            if (!date.getDay()) res.push('sunday');
+            if (isEqualDate(date, currentDate)) res.push('selected');
+
+            return res.join(' ');
+          };
+
+          $calendar.innerHTML = `
+            <div class="calendar-nav">
+              <i class="prev bx bx-caret-left"></i>
+              <div class="calendar-title">
+                <div class="month">${monthNames[month]}</div>
+                <div class="year">${year}</div>
+              </div>
+              <i class="next bx bx-caret-right"></i>
+            </div>
+            <div class="calendar-grid">
+              ${dayNames.map(day => `<div class="day">${day}</div>`).join('')}
+              ${eachCalendarDates(year, month)
+                .map(
+                  date =>
+                    `<div data-date="${formattedDate(date)}" class="${classNames(date)}">
+                      ${date.getDate()}
+                    </div>`
+                )
+                .join('')}
+            </div>`;
+
+          // null 병합(nullish coalescing) 연산자 ??는 좌항의 피연산자가 null 또는 undefined이면
+          // 우항의 피연산자를 반환하고, 그렇지 않으면 좌항의 피연산자를 반환한다.
+          size = _size ?? size;
+          // 인수로 캘린더 크기를 전달받으면 반영하고 전달받지 못하면 이전 크기를 사용한다. 기본값은 360px;
+          $calendar.style.setProperty('--calendar-width', `${size}px`);
+          // if (_size !== undefined) {
+          //   size = _size;
+          //   $calendar.style.setProperty('--calendar-width', `${size}px`);
+          // }
+
+          $calendar.style.display = 'block';
+        };
+      })();
+
+      $calendar.onclick = e => {
+        // 상위 HTML 요소에 이벤트 버블링을 중지시킨다.(필수)
+        e.stopPropagation();
+
+        // .prev 버튼이 클릭되면 전역 상태 currentDate를 전월로 변경시키고 캘린더를 다시 렌더링한다.
+        if (e.target.classList.contains('prev')) {
+          // new Date(2021, 0 - 1) => 2020/12
+          currentDate = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() - 1,
+            currentDate.getDate()
+          );
+          $datepicker.value = formattedDate(currentDate);
+          return renderCalendar();
+        }
+        // .next 버튼이 클릭되면 전역 상태 currentDate를 익월로 변경시키고 캘린더를 다시 렌더링한다.
+        if (e.target.classList.contains('next')) {
+          // new Date(2021, 0 + 1) => 2021/02
+          currentDate = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 1,
+            currentDate.getDate()
+          );
+          $datepicker.value = formattedDate(currentDate);
+          return renderCalendar();
+        }
+        // 캘린더의 날짜가 클릭되면 해달 날짜의 date-date 어트리뷰트의 값을 $datepicker 요소의 값으로 전달한다.
+        if (
+          e.target.matches('.calendar > .calendar-grid > div:not(.day)') &&
+          !e.target.classList.contains('selected')
+        ) {
+          // ?. 옵셔널 체이닝 연산자: 좌항의 피연산자가 null 또는 undefined인 경우 undefined를 반환하고, 그렇지 않으면 우항의 프로퍼티 참조를 이어간다.
+          // const $selected = document.querySelector('.selected');
+          // $selected && $selected.classList.remove('selected');
+          document.querySelector('.selected')?.classList.remove('selected');
+          e.target.classList.add('selected');
+
+          console.log('[SELECTED DATE]', e.target.dataset.date);
+          currentDate = new Date(e.target.dataset.date);
+          $datepicker.value = e.target.dataset.date;
+
+          $calendar.style.display = 'none';
+        }
+      };
+
+      // $calendar 요소(자손 요소 포함)와 $datepicker 요소 이외의 HTML 요소에서 클릭 이벤트가 발생하면 $calendar를 감춘다.
+      // $calendar 요소의 클릭 이벤트 핸들러에서 클릭 이벤트 버블링을 중지시켰으므로
+      // $calendar 요소와 그의 자손 요소에서 발생한 클릭 이벤트는 상위 HTML 요소로 전파되지 않는다.
+      // 따라서 아래 클릭 이벤트 핸들러는 $calendar 요소(자손 요소 포함)와 $datepicker 요소 이외의 HTML 요소에서 발생한 클릭 이벤트만 처리한다.
+      document.onclick = e => {
+        if (e.target === $datepicker) return;
+        $calendar.style.display = 'none';
+      };
+
+      // 크기가 300px인 캘린더를 생성한다.
+      $datepicker.onfocus = () => renderCalendar(300);
+    </script>
+  </body>
+</html>
