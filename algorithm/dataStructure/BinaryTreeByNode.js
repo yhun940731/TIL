@@ -21,7 +21,7 @@ class BinaryTree {
       }
     }
 
-    this.root = nodeArray[0];
+    [this.root] = nodeArray;
   }
 
   preorder() {
