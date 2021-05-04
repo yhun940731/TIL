@@ -15,13 +15,29 @@
 // commands의 길이는 1 이상 50 이하입니다.
 // commands의 각 원소는 길이가 3입니다.
 
+// 첫 답안
+// function solution(array, commands) {
+//   const answer = commands.map(
+//     (command) =>
+//       array.slice(command[0] - 1, command[1]).sort((a, b) => a - b)[
+//         command[2] - 1
+//       ]
+//   );
+//   return answer;
+// }
+
+// 가독성 향상을 위한 Refactoring
 function solution(array, commands) {
-  const answer = commands.map(
-    (command) =>
-      array.slice(command[0] - 1, command[1]).sort((a, b) => a - b)[
-        command[2] - 1
-      ]
-  );
+  const answer = commands.map((commend) => {
+    const [sPosition, ePosition, position] = commend;
+
+    const slicedArr = array
+      .slice(sPosition - 1, ePosition)
+      .sort((a, b) => a - b);
+
+    return slicedArr[position - 1];
+  });
+
   return answer;
 }
 
