@@ -19,7 +19,7 @@
 // 이때 이 학생은 체육복을 하나만 도난당했다고 가정하며, 남은 체육복이 하나이기에 다른 학생에게는 체육복을 빌려줄 수 없습니다.
 
 function solution(n, lost, reserve) {
-  let num = n - lost.length;
+  let students = n - lost.length;
 
   lost.sort((a, b) => a - b);
   reserve.sort((a, b) => a - b);
@@ -28,7 +28,7 @@ function solution(n, lost, reserve) {
     const idx = reserve.indexOf(lost[i]);
 
     if (idx !== -1) {
-      num += 1;
+      students += 1;
       lost.splice(i, 1);
       reserve.splice(idx, 1);
       i--;
@@ -42,14 +42,14 @@ function solution(n, lost, reserve) {
         reserve[j] - 1 === lost[i] ||
         reserve[j] + 1 === lost[i]
       ) {
-        num += 1;
+        students += 1;
         reserve.splice(j, 1);
         break;
       }
     }
   }
 
-  return num;
+  return students;
 }
 
 console.log(solution(5, [2, 4], [1, 3, 5])); // 5
