@@ -7,7 +7,7 @@
 // n은 1이상 8000000000 이하인 자연수입니다.
 
 function solution(n) {
-  return +(n + '').split('').sort().reverse().join('')
+  return +(n + '').split('').sort().reverse().join('');
 }
 
 solution(118372); // 873211
