@@ -7,9 +7,7 @@
 // 두 수는 1이상 1000000이하의 자연수입니다.
 
 // 최대공약수를 구하는 calGCF 함수
-function calGCF(n, m) {
-  let bigNum = n > m ? n : m;
-  let smallNum = n > m ? m : n;
+function calGCF(bigNum, smallNum) {
   const factor = [];
 
   for (let i = 2; i <= smallNum; i++) {
@@ -25,8 +23,9 @@ function calGCF(n, m) {
 }
 
 function solution(n, m) {
-  const GCF = calGCF(n, m);
+  const GCF = n > m ? calGCF(n, m) : calGCF(m, n);
   const LCM = GCF * (n / GCF) * (m / GCF);
+  // LCM = n * m / GCF와 동일하지만 보다 명확한 식을 위해
 
   return [GCF, LCM];
 }
