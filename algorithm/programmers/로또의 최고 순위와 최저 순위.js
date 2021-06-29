@@ -29,16 +29,27 @@
 // win_nums에는 같은 숫자가 2개 이상 담겨있지 않습니다.
 // win_nums의 원소들은 정렬되어 있지 않을 수도 있습니다.
 
+// function solution(lottos, winNums) {
+//   const zeroCnt = lottos.filter(v => v === 0).length;
+//   const myWinNum = lottos.filter(v => winNums.includes(v)).length;
+
+//   switch (myWinNum) {
+//     case 0: return [zeroCnt ? 7 - zeroCnt : 6, 6];
+//     case 1: case 2: case 3: case 4: case 5: return [7 - myWinNum - zeroCnt, 7 - myWinNum];
+//     case 6: return [1, 1];
+//     default: throw new Error('params error');
+//   }
+// }
+
 function solution(lottos, winNums) {
   const zeroCnt = lottos.filter(v => v === 0).length;
   const myWinNum = lottos.filter(v => winNums.includes(v)).length;
 
-  switch (myWinNum) {
-    case 0: return [zeroCnt ? 7 - zeroCnt : 6, 6];
-    case 1: case 2: case 3: case 4: case 5: return [7 - myWinNum - zeroCnt, 7 - myWinNum];
-    case 6: return [1, 1];
-    default: throw new Error('params error');
+  if (myWinNum === 0) return [zeroCnt ? 7 - zeroCnt : 6, 6];
+  if (myWinNum > 0 && myWinNum < 6) {
+    return [7 - myWinNum - zeroCnt, 7 - myWinNum];
   }
+  return [1, 1];
 }
 
 console.log(solution([44, 1, 0, 0, 31, 25], [31, 10, 45, 1, 6, 19])); // [3, 5]
