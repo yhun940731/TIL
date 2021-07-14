@@ -29,4 +29,4 @@ function solution(newId) {
   return seventh;
 }
 
-console.log(solution("...!@BaT#*..y.abcdefghijklm")); // "bat.y.abcdefghi"
+console.log(solution('...!@BaT# *..y.abcdefghijklm')); // 'bat.y.abcdefghi'
